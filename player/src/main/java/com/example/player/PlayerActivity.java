@@ -1,6 +1,5 @@
 package com.example.player;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
@@ -9,11 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.MediaStore;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,13 +20,8 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.MediaController;
-import android.widget.TextView;
-import com.example.player.MusicService;
 
 public class PlayerActivity extends AppCompatActivity implements MediaController.MediaPlayerControl {
     private ArrayList<Song> songList;
@@ -44,7 +36,6 @@ public class PlayerActivity extends AppCompatActivity implements MediaController
     private boolean paused = false, playbackPaused = false;
     private int lastPosition = 0, lastDuration = 0;
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +54,7 @@ public class PlayerActivity extends AppCompatActivity implements MediaController
         setContentView(R.layout.activity_player);
         songView = (ListView)findViewById(R.id.song_list);
         songList = new ArrayList<Song>();
-        getSongList();
+        loadSongs();
         Collections.sort(songList, new Comparator<Song>(){
             public int compare(Song a, Song b){
                 return a.getTitle().compareTo(b.getTitle());
@@ -96,21 +87,11 @@ public class PlayerActivity extends AppCompatActivity implements MediaController
     }
 
     private void playNext(){
-        musicSrv.playNext();
-        if (playbackPaused) {
-            setController();
-            playbackPaused = false;
-        }
-        controller.show(200);
+        pickSong(musicSrv.playNext());
     }
 
     private void playPrev(){
-        musicSrv.playPrev();
-        if (playbackPaused) {
-            setController();
-            playbackPaused = false;
-        }
-        controller.show(200);
+        pickSong(musicSrv.playPrev());
     }
 
     private ServiceConnection musicConnection = new ServiceConnection(){
@@ -188,8 +169,16 @@ public class PlayerActivity extends AppCompatActivity implements MediaController
         super.onDestroy();
     }
 
+    private void pickSong(int pos) {
+        SongAdapter adapter = (SongAdapter) songView.getAdapter();
+        adapter.setSelectedSong(pos);
+        adapter.notifyDataSetInvalidated();
+    }
+
     public void songPicked(View view){
-        musicSrv.setSong(Integer.parseInt(view.getTag().toString()));
+        int pos = Integer.parseInt(view.getTag().toString());
+        musicSrv.setSong(pos);
+        pickSong(pos);
         musicSrv.playSong();
         if (playbackPaused) {
             setController();
@@ -198,7 +187,7 @@ public class PlayerActivity extends AppCompatActivity implements MediaController
         controller.show(200);
     }
 
-    public void getSongList() {
+    public void loadSongs() {
         ContentResolver musicResolver = getContentResolver();
         Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";

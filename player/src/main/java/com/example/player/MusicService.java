@@ -145,14 +145,15 @@ public class MusicService extends Service implements
         songPosn=songIndex;
     }
 
-    public void playPrev(){
+    public int playPrev(){
         songPosn--;
         if (songPosn < 0)
             songPosn = songs.size() - 1;
         playSong();
+        return songPosn;
     }
 
-    public void playNext(){
+    public int playNext(){
         if (shuffle){
             int newSong = songPosn;
             while(newSong == songPosn){
@@ -165,6 +166,7 @@ public class MusicService extends Service implements
             if(songPosn >= songs.size()) songPosn=0;
         }
         playSong();
+        return songPosn;
     }
 
     public int getPosn(){

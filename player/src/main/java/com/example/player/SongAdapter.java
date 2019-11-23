@@ -13,10 +13,15 @@ import java.util.ArrayList;
 public class SongAdapter extends BaseAdapter {
     private ArrayList<Song> songs;
     private LayoutInflater songInf;
+    private int selectedSong = -1;
 
     public SongAdapter(Context c, ArrayList<Song> theSongs){
         songs=theSongs;
         songInf=LayoutInflater.from(c);
+    }
+
+    public void setSelectedSong(int pos) {
+        selectedSong = pos;
     }
 
     @Override
@@ -38,6 +43,8 @@ public class SongAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         LinearLayout songLay = (LinearLayout)songInf.inflate
                 (R.layout.song, parent, false);
+        if (selectedSong == position)
+            songLay.setBackgroundColor(0x404040FF);
         TextView songView = (TextView)songLay.findViewById(R.id.song_title);
         TextView artistView = (TextView)songLay.findViewById(R.id.song_artist);
         Song currSong = songs.get(position);

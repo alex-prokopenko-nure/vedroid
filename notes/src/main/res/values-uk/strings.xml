@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Нотатки</string>
+    <string name="action_settings">Налаштування</string>
+    <string name="title_activity_list">ListActivity</string>
+    <string name="search">Пошук</string>
+    <string name="title">Назва</string>
+    <string name="description">Опис</string>
+    <string name="appointment_date">Дата призначення</string>
+    <string name="save">Зберегти</string>
+    <string name="cancel">Відмінити</string>
+</resources>

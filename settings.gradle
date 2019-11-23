@@ -1,0 +1,2 @@
+include ':app', ':calculator', ':pz1', ':notes', ':player'
+rootProject.name='My Application'

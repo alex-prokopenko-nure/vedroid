@@ -1,2 +1,2 @@
-include ':app', ':calculator', ':pz1', ':notes', ':player'
+include ':app', ':calculator', ':pz1', ':notes', ':player', ':compass'
 rootProject.name='My Application'
